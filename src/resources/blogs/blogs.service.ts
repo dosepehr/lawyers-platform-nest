@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Blog } from './entities/blog.entity';
@@ -21,12 +21,25 @@ export class BlogsService {
     }
   }
 
-  findAll() {
-    return `This action returns all blogs`;
+  async findAll(): Promise<ResponseType<Blog[]>> {
+    const blogs = await this.blogsRepository.find();
+    return {
+      status: 200,
+      message: 'Blogs fetched successfully',
+      data: blogs
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} blog`;
+  async findOne(id: number): Promise<ResponseType<Blog>> {
+    const blog = await this.blogsRepository.findOne({ where: { id } });
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
+    }
+    return {
+      status: 200,
+      message: 'Blog fetched successfully',
+      data: blog
+    }
   }
 
   update(id: number, updateBlogDto: UpdateBlogDto) {
