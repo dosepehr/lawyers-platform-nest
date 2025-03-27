@@ -59,4 +59,13 @@ export class BlogsService {
       message: 'Blog soft deleted successfully',
     }
   }
+
+  async hardDelete(id: number): Promise<ResponseType<Blog>> {
+    await this.findOne(id);
+    await this.blogsRepository.delete(id);
+    return {
+      status: 200,
+      message: 'Blog hard deleted successfully',
+    }
+  }
 }

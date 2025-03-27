@@ -31,4 +31,9 @@ export class BlogsController {
   softDelete(@Param('id') id: string) {
     return this.blogsService.softDelete(+id);
   }
+
+  @Delete('/hard/:id')
+  hardDelete(@Param('id') id: string) {
+    return this.blogsService.hardDelete(+id);
+  }
 }
