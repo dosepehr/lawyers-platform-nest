@@ -4,11 +4,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { BlogsModule } from './resources/blogs/blogs.module';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { multerConfig } from './config/multer.config';
-import { join } from 'path';
-
 @Module({
   imports: [
     ConfigModule.forRoot({

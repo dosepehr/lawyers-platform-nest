@@ -5,34 +5,34 @@ import { Blog } from './entities/blog.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseType } from 'src/types/response.interface';
-import * as fs from 'fs';
 
 @Injectable()
 export class BlogsService {
   constructor(
     @InjectRepository(Blog)
-    private readonly blogsRepository: Repository<Blog>
+    private readonly blogRepository: Repository<Blog>
   ) { }
+
   async create(createBlogDto: CreateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
     if (!file) {
       throw new BadRequestException('Image file is required');
     }
 
-    const blog = this.blogsRepository.create({
+    const blog = this.blogRepository.create({
       ...createBlogDto,
       image: file.path
     });
-    await this.blogsRepository.save(blog);
+
+    await this.blogRepository.save(blog);
     return {
       status: 201,
       message: 'Blog created successfully',
       data: blog
     }
-
   }
 
   async findAll(): Promise<ResponseType<Blog[]>> {
-    const blogs = await this.blogsRepository.find();
+    const blogs = await this.blogRepository.find();
     return {
       status: 200,
       message: 'Blogs fetched successfully',
@@ -41,7 +41,7 @@ export class BlogsService {
   }
 
   async findOne(id: number): Promise<ResponseType<Blog>> {
-    const blog = await this.blogsRepository.findOne({ where: { id } });
+    const blog = await this.blogRepository.findOne({ where: { id } });
     if (!blog) {
       throw new NotFoundException('Blog not found');
     }
@@ -54,7 +54,7 @@ export class BlogsService {
 
   async update(id: number, updateBlogDto: UpdateBlogDto): Promise<ResponseType<Blog>> {
     await this.findOne(id);
-    // await this.blogsRepository.update(id, updateBlogDto);`
+    // await this.blogRepository.update(id, updateBlogDto);`
     return {
       status: 200,
       message: 'Blog updated successfully',
@@ -63,7 +63,7 @@ export class BlogsService {
 
   async softDelete(id: number): Promise<ResponseType<Blog>> {
     await this.findOne(id);
-    await this.blogsRepository.softDelete(id);
+    await this.blogRepository.softDelete(id);
     return {
       status: 200,
       message: 'Blog soft deleted successfully',
@@ -72,7 +72,7 @@ export class BlogsService {
 
   async hardDelete(id: number): Promise<ResponseType<Blog>> {
     await this.findOne(id);
-    await this.blogsRepository.delete(id);
+    await this.blogRepository.delete(id);
     return {
       status: 200,
       message: 'Blog hard deleted successfully',
@@ -80,14 +80,14 @@ export class BlogsService {
   }
 
   async restore(id: number): Promise<ResponseType<Blog>> {
-    const blog = await this.blogsRepository.findOne({ where: { id }, withDeleted: true });
+    const blog = await this.blogRepository.findOne({ where: { id }, withDeleted: true });
     if (!blog) {
       throw new NotFoundException('Blog not found');
     }
     if (!blog.deletedAt) {
       throw new BadRequestException('Blog is not deleted');
     }
-    await this.blogsRepository.restore(id);
+    await this.blogRepository.restore(id);
     return {
       status: 200,
       message: 'Blog restored successfully',

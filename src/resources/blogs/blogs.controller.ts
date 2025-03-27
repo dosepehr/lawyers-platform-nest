@@ -3,29 +3,18 @@ import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { multerConfig } from '../../config/multer.config';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) { }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, callback) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-          const fileExtension = file.originalname.split('.').pop();
-          callback(null, `${uniqueSuffix}.${fileExtension}`);
-        }
-      })
-    })
-  )
+  @UseInterceptors(FileInterceptor('image', multerConfig))
   create(@Body() createBlogDto: CreateBlogDto, @UploadedFile(
     new ParseFilePipe({
       validators: [
-        new MaxFileSizeValidator({ maxSize: 1000000 }),
+        new MaxFileSizeValidator({ maxSize: 1_000_000 }), // 1MB
         new FileTypeValidator({ fileType: 'image/*' }),
       ],
     }),
