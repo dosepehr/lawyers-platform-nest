@@ -5,6 +5,7 @@ import { Blog } from './entities/blog.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseType } from 'src/types/response.interface';
+import * as fs from 'fs';
 
 @Injectable()
 export class BlogsService {
@@ -12,13 +13,22 @@ export class BlogsService {
     @InjectRepository(Blog)
     private readonly blogsRepository: Repository<Blog>
   ) { }
-  async create(createBlogDto: CreateBlogDto): Promise<ResponseType<Blog>> {
-    const blog = this.blogsRepository.create(createBlogDto);
+  async create(createBlogDto: CreateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
+    if (!file) {
+      throw new BadRequestException('Image file is required');
+    }
+
+    const blog = this.blogsRepository.create({
+      ...createBlogDto,
+      image: file.path
+    });
     await this.blogsRepository.save(blog);
     return {
       status: 201,
       message: 'Blog created successfully',
+      data: blog
     }
+
   }
 
   async findAll(): Promise<ResponseType<Blog[]>> {
@@ -44,7 +54,7 @@ export class BlogsService {
 
   async update(id: number, updateBlogDto: UpdateBlogDto): Promise<ResponseType<Blog>> {
     await this.findOne(id);
-    await this.blogsRepository.update(id, updateBlogDto);
+    // await this.blogsRepository.update(id, updateBlogDto);`
     return {
       status: 200,
       message: 'Blog updated successfully',

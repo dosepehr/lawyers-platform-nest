@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateBlogDto {
     @IsString()
@@ -13,9 +13,8 @@ export class CreateBlogDto {
     @IsNotEmpty()
     writer: string;
 
-    @IsString()
-    @IsNotEmpty()
-    image: string;
+    @IsOptional()
+    image: Express.Multer.File;
 
     @IsString()
     @IsNotEmpty()
