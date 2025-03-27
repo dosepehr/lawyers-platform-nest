@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateServiceDto {
     @IsNotEmpty()
@@ -13,13 +13,13 @@ export class CreateServiceDto {
     @IsString()
     description: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    image: string;
+    image: Express.Multer.File;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    video: string;
+    video: Express.Multer.File;
 
     @IsNotEmpty()
     @IsString()
