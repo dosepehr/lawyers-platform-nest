@@ -42,11 +42,13 @@ export class BlogsService {
     }
   }
 
-  update(id: number, updateBlogDto: UpdateBlogDto) {
-    return `This action updates a #${id} blog`;
+  async update(id: number, updateBlogDto: UpdateBlogDto): Promise<ResponseType<Blog>> {
+    await this.findOne(id);
+    await this.blogsRepository.update(id, updateBlogDto);
+    return {
+      status: 200,
+      message: 'Blog updated successfully',
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} blog`;
-  }
 }

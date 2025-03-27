@@ -5,7 +5,7 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly blogsService: BlogsService) {}
+  constructor(private readonly blogsService: BlogsService) { }
 
   @Post()
   create(@Body() createBlogDto: CreateBlogDto) {
@@ -27,8 +27,8 @@ export class BlogsController {
     return this.blogsService.update(+id, updateBlogDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.blogsService.remove(+id);
+  @Delete('/soft/:id')
+  softDelete(@Param('id') id: string) {
+    return this.blogsService.softDelete(+id);
   }
 }
