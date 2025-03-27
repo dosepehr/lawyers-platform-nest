@@ -17,6 +17,12 @@ export class Blog {
     @Column()
     writer: string
 
+    @Column()
+    category: string;
+
+    @Column()
+    tags: string;
+
     @CreateDateColumn()
     createdAt: Date;
 
