@@ -51,4 +51,12 @@ export class BlogsService {
     }
   }
 
+  async softDelete(id: number): Promise<ResponseType<Blog>> {
+    await this.findOne(id);
+    await this.blogsRepository.softDelete(id);
+    return {
+      status: 200,
+      message: 'Blog soft deleted successfully',
+    }
+  }
 }
