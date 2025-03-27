@@ -36,4 +36,9 @@ export class BlogsController {
   hardDelete(@Param('id') id: string) {
     return this.blogsService.hardDelete(+id);
   }
+
+  @Patch('/restore/:id')
+  restore(@Param('id') id: string) {
+    return this.blogsService.restore(+id);
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Blog } from './entities/blog.entity';
@@ -66,6 +66,21 @@ export class BlogsService {
     return {
       status: 200,
       message: 'Blog hard deleted successfully',
+    }
+  }
+
+  async restore(id: number): Promise<ResponseType<Blog>> {
+    const blog = await this.blogsRepository.findOne({ where: { id }, withDeleted: true });
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
+    }
+    if (!blog.deletedAt) {
+      throw new BadRequestException('Blog is not deleted');
+    }
+    await this.blogsRepository.restore(id);
+    return {
+      status: 200,
+      message: 'Blog restored successfully',
     }
   }
 }
