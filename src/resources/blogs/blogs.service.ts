@@ -5,7 +5,7 @@ import { Blog } from './entities/blog.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseType } from 'src/utils/types/response.interface';
-
+import { deleteFile } from 'src/utils/funcs/deleteFile';
 @Injectable()
 export class BlogsService {
   constructor(
@@ -77,10 +77,16 @@ export class BlogsService {
     }
   }
 
-  async update(id: number, updateBlogDto: UpdateBlogDto): Promise<ResponseType<Blog>> {
-    await this.findOneById(id);
+  async update(id: number, updateBlogDto: UpdateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
+    const blog = await this.findOneById(id);
     await this.checkSlug(updateBlogDto.slug as string);
-    // await this.blogRepository.update(id, updateBlogDto);
+    const updateData = { ...updateBlogDto };
+    if (file) {
+      // delete old file
+      deleteFile(blog?.data?.image);
+      updateData.image = file.path;
+    }
+    await this.blogRepository.update(id, updateData);
     return {
       statusCode: 200,
       message: 'Blog updated successfully',
@@ -97,7 +103,8 @@ export class BlogsService {
   }
 
   async hardDelete(id: number): Promise<ResponseType<Blog>> {
-    await this.findOneById(id);
+    const blog = await this.findOneById(id);
+    deleteFile(blog?.data?.image);
     await this.blogRepository.delete(id);
     return {
       statusCode: 200,

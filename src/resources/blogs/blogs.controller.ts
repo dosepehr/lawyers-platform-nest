@@ -33,8 +33,9 @@ export class BlogsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
-    return this.blogsService.update(+id, updateBlogDto);
+  @UseInterceptors(FileInterceptor('image', multerConfig))
+  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto, @UploadedFile() file: Express.Multer.File) {
+    return this.blogsService.update(+id, updateBlogDto, file);
   }
 
   @Delete('/soft/:id')

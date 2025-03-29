@@ -18,7 +18,8 @@ export class CreateBlogDto {
     writer: string;
 
     @IsOptional()
-    image: Express.Multer.File;
+    @IsString()
+    image: string;
 
     @IsString()
     @IsNotEmpty()
