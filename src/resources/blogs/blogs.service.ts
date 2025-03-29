@@ -96,7 +96,7 @@ export class BlogsService {
 
     await this.checkSlug(updateBlogDto.slug as string);
 
-    const updateData = { ...updateBlogDto };
+    const updateData = { ...updateBlogDto, serviceId: undefined };
     if (file) {
       // delete old file
       deleteFile(blog?.image);
