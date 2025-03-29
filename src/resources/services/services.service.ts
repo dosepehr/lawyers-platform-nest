@@ -43,9 +43,35 @@ export class ServicesService {
       data: service
     };
   }
+  async findOneById(id: number): Promise<ResponseType<Service>> {
+    const service = await this.serviceRepository.findOne({ where: { id } });
+    if (!service) {
+      throw new NotFoundException('Service not found');
+    }
+    return {
+      statusCode: 200,
+      message: 'Service fetched successfully',
+      data: service
+    };
+  }
+  async update(id: number, updateServiceDto: UpdateServiceDto, files?: { image?: Express.Multer.File[], video?: Express.Multer.File[] }): Promise<ResponseType<Service>> {
+    await this.findOneById(id);
 
-  update(id: number, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
+    const updateData = { ...updateServiceDto };
+
+    // Update file paths if new files are uploaded
+    if (files?.image?.[0]) {
+      updateData.image = files.image[0].path;
+    }
+    if (files?.video?.[0]) {
+      updateData.video = files.video[0].path;
+    }
+
+    await this.serviceRepository.update(id, updateData);
+    return {
+      statusCode: 200,
+      message: 'Service updated successfully',
+    };
   }
 
   remove(id: number) {

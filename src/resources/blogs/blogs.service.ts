@@ -54,7 +54,7 @@ export class BlogsService {
 
   async update(id: number, updateBlogDto: UpdateBlogDto): Promise<ResponseType<Blog>> {
     await this.findOne(id);
-    // await this.blogRepository.update(id, updateBlogDto);`
+    // await this.blogRepository.update(id, updateBlogDto);
     return {
       statusCode: 200,
       message: 'Blog updated successfully',

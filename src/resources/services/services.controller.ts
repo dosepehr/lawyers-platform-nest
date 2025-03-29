@@ -16,7 +16,9 @@ export class ServicesController {
   ], multerConfig))
   create(
     @Body() createServiceDto: CreateServiceDto,
-    @UploadedFiles(new ServiceFileUplaodValidatorPipePipe())
+    @UploadedFiles(new ServiceFileUplaodValidatorPipePipe({
+      requiredImage: true,
+    }))
     files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }
   ) {
     return this.servicesService.create(createServiceDto, files);
@@ -33,8 +35,19 @@ export class ServicesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.servicesService.update(+id, updateServiceDto);
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'image', maxCount: 1 },
+    { name: 'video', maxCount: 1 },
+  ], multerConfig))
+  async update(
+    @Param('id') id: string,
+    @Body() updateServiceDto: UpdateServiceDto,
+    @UploadedFiles(new ServiceFileUplaodValidatorPipePipe({
+      requiredImage: false,
+    }))
+    files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }
+  ) {
+    return this.servicesService.update(+id, updateServiceDto, files);
   }
 
   @Delete(':id')

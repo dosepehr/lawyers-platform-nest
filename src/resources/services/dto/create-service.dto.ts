@@ -15,11 +15,11 @@ export class CreateServiceDto {
 
     @IsOptional()
     @IsString()
-    image: Express.Multer.File;
+    image: string;
 
     @IsOptional()
     @IsString()
-    video: Express.Multer.File;
+    video: string;
 
     @IsNotEmpty()
     @IsString()
