@@ -4,7 +4,7 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../../utils/config/multer.config';
-
+import { ServiceFileUplaodValidatorPipePipe } from '../../utils/pipes/service-file-uplaod-validator-pipe.pipe';
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) { }
@@ -12,9 +12,13 @@ export class ServicesController {
   @Post()
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'image', maxCount: 1 },
-    { name: 'video', maxCount: 1, },
+    { name: 'video', maxCount: 1 },
   ], multerConfig))
-  create(@Body() createServiceDto: CreateServiceDto, @UploadedFiles() files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }) {
+  create(
+    @Body() createServiceDto: CreateServiceDto,
+    @UploadedFiles(new ServiceFileUplaodValidatorPipePipe())
+    files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }
+  ) {
     return this.servicesService.create(createServiceDto, files);
   }
 
