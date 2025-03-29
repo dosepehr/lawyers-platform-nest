@@ -3,7 +3,7 @@ import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerConfig } from '../../config/multer.config';
+import { multerConfig } from '../../utils/config/multer.config';
 
 @Controller('blogs')
 export class BlogsController {

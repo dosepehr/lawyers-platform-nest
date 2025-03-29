@@ -4,7 +4,7 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Blog } from './entities/blog.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ResponseType } from 'src/types/response.interface';
+import { ResponseType } from 'src/utils/types/response.interface';
 
 @Injectable()
 export class BlogsService {

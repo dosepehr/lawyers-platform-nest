@@ -3,7 +3,7 @@ import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { multerConfig } from '../../config/multer.config';
+import { multerConfig } from '../../utils/config/multer.config';
 
 @Controller('services')
 export class ServicesController {
