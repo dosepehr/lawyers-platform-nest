@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseType } from 'src/utils/types/response.interface';
 import { deleteFile } from 'src/utils/funcs/deleteFile';
 import { Service } from '../services/entities/service.entity';
+import { Not } from 'typeorm';
 @Injectable()
 export class BlogsService {
   constructor(
@@ -17,8 +18,15 @@ export class BlogsService {
     private readonly serviceRepository: Repository<Service>
   ) { }
 
-  async checkSlug(slug: string): Promise<ResponseType<Blog>> {
-    const blog = await this.blogRepository.findOne({ where: { slug } });
+  async checkSlug(slug: string, excludeId?: number): Promise<ResponseType<Blog>> {
+    const query = { where: { slug } };
+
+    // If we're updating (excludeId exists), exclude the current blog from check
+    if (excludeId) {
+      Object.assign(query.where, { id: Not(excludeId) });
+    }
+
+    const blog = await this.blogRepository.findOne(query);
     if (blog) {
       throw new BadRequestException('Slug is already in use');
     }
@@ -87,14 +95,14 @@ export class BlogsService {
   }
 
   async update(id: number, updateBlogDto: UpdateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
+    const { data: blog } = await this.findOneById(id);
+    if (updateBlogDto.slug) {
+      await this.checkSlug(updateBlogDto.slug as string, id);
+    }
     const service = await this.serviceRepository.findOne({ where: { id: updateBlogDto.serviceId } });
     if (!service) {
       throw new NotFoundException('Service not found');
     }
-
-    const { data: blog } = await this.findOneById(id);
-
-    await this.checkSlug(updateBlogDto.slug as string);
 
     const updateData = { ...updateBlogDto, serviceId: undefined };
     if (file) {
