@@ -40,7 +40,19 @@ export class BlogsService {
     }
   }
 
-  async findOne(id: number): Promise<ResponseType<Blog>> {
+  async findOne(slug: string): Promise<ResponseType<Blog>> {
+    const blog = await this.blogRepository.findOne({ where: { slug } });
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
+    }
+    return {
+      statusCode: 200,
+      message: 'Blog fetched successfully',
+      data: blog
+    }
+  }
+
+  async findOneById(id: number): Promise<ResponseType<Blog>> {
     const blog = await this.blogRepository.findOne({ where: { id } });
     if (!blog) {
       throw new NotFoundException('Blog not found');
@@ -53,7 +65,7 @@ export class BlogsService {
   }
 
   async update(id: number, updateBlogDto: UpdateBlogDto): Promise<ResponseType<Blog>> {
-    await this.findOne(id);
+    await this.findOneById(id);
     // await this.blogRepository.update(id, updateBlogDto);
     return {
       statusCode: 200,
@@ -62,7 +74,7 @@ export class BlogsService {
   }
 
   async softDelete(id: number): Promise<ResponseType<Blog>> {
-    await this.findOne(id);
+    await this.findOneById(id);
     await this.blogRepository.softDelete(id);
     return {
       statusCode: 200,
@@ -71,7 +83,7 @@ export class BlogsService {
   }
 
   async hardDelete(id: number): Promise<ResponseType<Blog>> {
-    await this.findOne(id);
+    await this.findOneById(id);
     await this.blogRepository.delete(id);
     return {
       statusCode: 200,

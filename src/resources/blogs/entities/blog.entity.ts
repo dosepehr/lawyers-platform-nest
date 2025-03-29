@@ -9,6 +9,9 @@ export class Blog {
     title: string;
 
     @Column()
+    slug: string;
+
+    @Column()
     image: string;
 
     @Column()
