@@ -74,7 +74,12 @@ export class ServicesService {
     };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} service`;
+  async remove(id: number) {
+    await this.findOneById(id);
+    await this.serviceRepository.delete(id);
+    return {
+      statusCode: 200,
+      message: 'Service deleted successfully',
+    };
   }
 }
