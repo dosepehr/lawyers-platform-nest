@@ -7,6 +7,10 @@ export class CreateBlogDto {
 
     @IsString()
     @IsNotEmpty()
+    slug: string;
+
+    @IsString()
+    @IsNotEmpty()
     content: string;
 
     @IsString()
@@ -18,7 +22,7 @@ export class CreateBlogDto {
 
     @IsString()
     @IsNotEmpty()
-    category: string;
+    service: string;
 
     @IsString()
     @IsNotEmpty()

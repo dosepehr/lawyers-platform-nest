@@ -8,7 +8,7 @@ export class Blog {
     @Column()
     title: string;
 
-    @Column()
+    @Column({ unique: true })
     slug: string;
 
     @Column()
@@ -21,7 +21,7 @@ export class Blog {
     writer: string
 
     @Column()
-    category: string;
+    service: string;
 
     @Column()
     tags: string;
