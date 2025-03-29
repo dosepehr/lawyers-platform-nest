@@ -13,10 +13,23 @@ export class BlogsService {
     private readonly blogRepository: Repository<Blog>
   ) { }
 
+  async checkSlug(slug: string): Promise<ResponseType<Blog>> {
+    const blog = await this.blogRepository.findOne({ where: { slug } });
+    if (blog) {
+      throw new BadRequestException('Slug is already in use');
+    }
+    return {
+      statusCode: 200,
+      message: 'Slug is unique',
+    }
+  }
+
   async create(createBlogDto: CreateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
     if (!file) {
       throw new BadRequestException('Image file is required');
     }
+
+    await this.checkSlug(createBlogDto.slug);
 
     const blog = this.blogRepository.create({
       ...createBlogDto,
@@ -66,6 +79,7 @@ export class BlogsService {
 
   async update(id: number, updateBlogDto: UpdateBlogDto): Promise<ResponseType<Blog>> {
     await this.findOneById(id);
+    await this.checkSlug(updateBlogDto.slug as string);
     // await this.blogRepository.update(id, updateBlogDto);
     return {
       statusCode: 200,
