@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Service } from "src/resources/services/entities/service.entity";
 
 export class CreateBlogDto {
     @IsString()
@@ -23,7 +24,7 @@ export class CreateBlogDto {
 
     @IsString()
     @IsNotEmpty()
-    service: string;
+    service: Service;
 
     @IsString()
     @IsNotEmpty()

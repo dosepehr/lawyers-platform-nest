@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, DeleteDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Service } from "src/resources/services/entities/service.entity";
 
 @Entity({ name: 'blogs' })
 export class Blog {
@@ -20,8 +21,8 @@ export class Blog {
     @Column()
     writer: string
 
-    @Column()
-    service: string;
+    @ManyToOne(() => Service, (service) => service.blogs)
+    service: Service;
 
     @Column()
     tags: string;

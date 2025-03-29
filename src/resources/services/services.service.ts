@@ -49,7 +49,7 @@ export class ServicesService {
   }
 
   async findOne(slug: string): Promise<ResponseType<Service>> {
-    const service = await this.serviceRepository.findOne({ where: { slug } });
+    const service = await this.serviceRepository.findOne({ where: { slug }, relations: ['blogs'] });
     if (!service) {
       throw new NotFoundException('Service not found');
     }

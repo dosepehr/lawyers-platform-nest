@@ -11,7 +11,7 @@ export class CreateServiceDto {
 
     @IsNotEmpty()
     @IsString()
-    description: string;
+    content: string;
 
     @IsOptional()
     @IsString()

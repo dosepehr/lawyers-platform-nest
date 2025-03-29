@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Blog } from "src/resources/blogs/entities/blog.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({ name: 'services' })
 export class Service {
@@ -12,7 +13,7 @@ export class Service {
     slug: string;
 
     @Column()
-    description: string;
+    content: string;
 
     @Column()
     image: string;
@@ -22,6 +23,9 @@ export class Service {
 
     @Column()
     tags: string;
+
+    @OneToMany(() => Blog, (blog) => blog.service)
+    blogs: Blog[];
 
     @CreateDateColumn()
     createdAt: Date;

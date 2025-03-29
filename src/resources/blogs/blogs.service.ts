@@ -33,7 +33,8 @@ export class BlogsService {
 
     const blog = this.blogRepository.create({
       ...createBlogDto,
-      image: file.path
+      image: file.path,
+
     });
 
     await this.blogRepository.save(blog);
@@ -78,12 +79,12 @@ export class BlogsService {
   }
 
   async update(id: number, updateBlogDto: UpdateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
-    const blog = await this.findOneById(id);
+    const { data: blog } = await this.findOneById(id);
     await this.checkSlug(updateBlogDto.slug as string);
     const updateData = { ...updateBlogDto };
     if (file) {
       // delete old file
-      deleteFile(blog?.data?.image);
+      deleteFile(blog?.image);
       updateData.image = file.path;
     }
     await this.blogRepository.update(id, updateData);
@@ -103,8 +104,8 @@ export class BlogsService {
   }
 
   async hardDelete(id: number): Promise<ResponseType<Blog>> {
-    const blog = await this.findOneById(id);
-    deleteFile(blog?.data?.image);
+    const { data: blog } = await this.findOneById(id);
+    deleteFile(blog?.image);
     await this.blogRepository.delete(id);
     return {
       statusCode: 200,
