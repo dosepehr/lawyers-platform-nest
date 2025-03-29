@@ -4,7 +4,7 @@ import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from
 export class ServiceFileUplaodValidatorPipePipe implements PipeTransform {
   transform(value: { image?: Express.Multer.File[], video?: Express.Multer.File[] }, metadata: ArgumentMetadata) {
     // Check if image exists (required)
-    if (!value.image || value.image.length === 0) {
+    if (!value?.image || value.image.length === 0) {
       throw new BadRequestException('Image is required');
     }
 

@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { Service } from './entities/service.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ResponseType } from 'src/utils/types/response.interface';
 
 @Injectable()
 export class ServicesService {
@@ -21,12 +22,26 @@ export class ServicesService {
     return this.serviceRepository.save(service);
   }
 
-  findAll() {
-    return `This action returns all services`;
+  async findAll(): Promise<ResponseType<Service[]>> {
+    const services = await this.serviceRepository.find();
+    return {
+      statusCode: 200,
+      message: 'Services fetched successfully',
+      data: services,
+      count: services?.length
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
+  async findOne(slug: string): Promise<ResponseType<Service>> {
+    const service = await this.serviceRepository.findOne({ where: { slug } });
+    if (!service) {
+      throw new NotFoundException('Service not found');
+    }
+    return {
+      statusCode: 200,
+      message: 'Service fetched successfully',
+      data: service
+    };
   }
 
   update(id: number, updateServiceDto: UpdateServiceDto) {

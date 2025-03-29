@@ -25,7 +25,7 @@ export class BlogsService {
 
     await this.blogRepository.save(blog);
     return {
-      status: 201,
+      statusCode: 201,
       message: 'Blog created successfully',
       data: blog
     }
@@ -34,7 +34,7 @@ export class BlogsService {
   async findAll(): Promise<ResponseType<Blog[]>> {
     const blogs = await this.blogRepository.find();
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Blogs fetched successfully',
       data: blogs
     }
@@ -46,7 +46,7 @@ export class BlogsService {
       throw new NotFoundException('Blog not found');
     }
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Blog fetched successfully',
       data: blog
     }
@@ -56,7 +56,7 @@ export class BlogsService {
     await this.findOne(id);
     // await this.blogRepository.update(id, updateBlogDto);`
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Blog updated successfully',
     }
   }
@@ -65,7 +65,7 @@ export class BlogsService {
     await this.findOne(id);
     await this.blogRepository.softDelete(id);
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Blog soft deleted successfully',
     }
   }
@@ -74,7 +74,7 @@ export class BlogsService {
     await this.findOne(id);
     await this.blogRepository.delete(id);
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Blog hard deleted successfully',
     }
   }
@@ -89,7 +89,7 @@ export class BlogsService {
     }
     await this.blogRepository.restore(id);
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Blog restored successfully',
     }
   }
