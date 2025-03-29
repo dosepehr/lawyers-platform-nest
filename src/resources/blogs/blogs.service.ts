@@ -6,11 +6,15 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseType } from 'src/utils/types/response.interface';
 import { deleteFile } from 'src/utils/funcs/deleteFile';
+import { Service } from '../services/entities/service.entity';
 @Injectable()
 export class BlogsService {
   constructor(
     @InjectRepository(Blog)
-    private readonly blogRepository: Repository<Blog>
+    private readonly blogRepository: Repository<Blog>,
+
+    @InjectRepository(Service)
+    private readonly serviceRepository: Repository<Service>
   ) { }
 
   async checkSlug(slug: string): Promise<ResponseType<Blog>> {
@@ -25,6 +29,10 @@ export class BlogsService {
   }
 
   async create(createBlogDto: CreateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
+    const service = await this.serviceRepository.findOne({ where: { id: createBlogDto.serviceId } });
+    if (!service) {
+      throw new NotFoundException('Service not found');
+    }
     if (!file) {
       throw new BadRequestException('Image file is required');
     }
@@ -34,7 +42,7 @@ export class BlogsService {
     const blog = this.blogRepository.create({
       ...createBlogDto,
       image: file.path,
-
+      service
     });
 
     await this.blogRepository.save(blog);
@@ -79,18 +87,26 @@ export class BlogsService {
   }
 
   async update(id: number, updateBlogDto: UpdateBlogDto, file: Express.Multer.File): Promise<ResponseType<Blog>> {
+    const service = await this.serviceRepository.findOne({ where: { id: updateBlogDto.serviceId } });
+    if (!service) {
+      throw new NotFoundException('Service not found');
+    }
+
     const { data: blog } = await this.findOneById(id);
+
     await this.checkSlug(updateBlogDto.slug as string);
+
     const updateData = { ...updateBlogDto };
     if (file) {
       // delete old file
       deleteFile(blog?.image);
       updateData.image = file.path;
     }
-    await this.blogRepository.update(id, updateData);
+    await this.blogRepository.update(id, { ...updateData, service });
     return {
       statusCode: 200,
       message: 'Blog updated successfully',
+      data: blog
     }
   }
 

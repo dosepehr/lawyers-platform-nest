@@ -22,9 +22,8 @@ export class CreateBlogDto {
     @IsString()
     image: string;
 
-    @IsString()
     @IsNotEmpty()
-    service: Service;
+    serviceId: number;
 
     @IsString()
     @IsNotEmpty()
