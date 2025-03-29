@@ -5,7 +5,7 @@ import { Service } from './entities/service.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseType } from 'src/utils/types/response.interface';
-
+import { deleteFiles, deleteFile } from 'src/utils/funcs/deleteFile';
 @Injectable()
 export class ServicesService {
   constructor(
@@ -55,15 +55,19 @@ export class ServicesService {
     };
   }
   async update(id: number, updateServiceDto: UpdateServiceDto, files?: { image?: Express.Multer.File[], video?: Express.Multer.File[] }): Promise<ResponseType<Service>> {
-    await this.findOneById(id);
+    const service = await this.findOneById(id);
 
     const updateData = { ...updateServiceDto };
 
     // Update file paths if new files are uploaded
     if (files?.image?.[0]) {
+      // delete old file
+      deleteFile(service?.data?.image);
       updateData.image = files.image[0].path;
     }
     if (files?.video?.[0]) {
+      // delete old file
+      deleteFile(service?.data?.video);
       updateData.video = files.video[0].path;
     }
 
@@ -75,7 +79,9 @@ export class ServicesService {
   }
 
   async remove(id: number) {
-    await this.findOneById(id);
+    const service = await this.findOneById(id);
+    // delete files
+    deleteFiles([service?.data?.image, service?.data?.video]);
     await this.serviceRepository.delete(id);
     return {
       statusCode: 200,
