@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { Service } from './entities/service.entity';
@@ -13,13 +13,29 @@ export class ServicesService {
     private readonly serviceRepository: Repository<Service>
   ) { }
 
-  create(createServiceDto: CreateServiceDto, files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }) {
+  async checkSlug(slug: string): Promise<ResponseType<Service>> {
+    const service = await this.serviceRepository.findOne({ where: { slug } });
+    if (service) {
+      throw new BadRequestException('Slug is already in use');
+    }
+    return {
+      statusCode: 200,
+      message: 'Slug is unique',
+    }
+  }
+
+  async create(createServiceDto: CreateServiceDto, files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }): Promise<ResponseType<Service>> {
+    await this.checkSlug(createServiceDto.slug);
     const service = this.serviceRepository.create({
       ...createServiceDto,
       image: files.image?.[0].path,
       video: files.video?.[0].path
     });
-    return this.serviceRepository.save(service);
+    await this.serviceRepository.save(service);
+    return {
+      statusCode: 201,
+      message: 'Service created successfully',
+    }
   }
 
   async findAll(): Promise<ResponseType<Service[]>> {
@@ -56,7 +72,7 @@ export class ServicesService {
   }
   async update(id: number, updateServiceDto: UpdateServiceDto, files?: { image?: Express.Multer.File[], video?: Express.Multer.File[] }): Promise<ResponseType<Service>> {
     const service = await this.findOneById(id);
-
+    await this.checkSlug(updateServiceDto.slug as string);
     const updateData = { ...updateServiceDto };
 
     // Update file paths if new files are uploaded
