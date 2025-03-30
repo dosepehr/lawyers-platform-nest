@@ -2,7 +2,9 @@ import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common'
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from '../../utils/guards/local-auth.guard';
 import { JwtAuthGuard } from 'src/utils/guards/jwt-auth.guard';
-import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/utils/decorators/role.decorator';
+import { Role } from 'src/utils/enums/role.enum';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
 interface LoginDto {
   username: string;
   password: string;
@@ -29,5 +31,16 @@ export class AuthController {
       statusCode: 200,
       message: 'Logged out successfully'
     };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('protected')
+  @Roles(Role.Admin, Role.Lawyer)
+  getProtectedData(@Request() req: any) {
+    return {
+      statusCode: 200,
+      message: 'Protected data',
+      data: req.user,
+    }
   }
 }

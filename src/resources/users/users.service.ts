@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-
+import { Role } from 'src/utils/enums/role.enum';
 @Injectable()
 export class UsersService {
   private readonly users = [
@@ -10,11 +10,13 @@ export class UsersService {
       id: 1,
       username: 'john',
       password: 'changeme',
+      roles: Role.Lawyer,
     },
     {
       id: 2,
       username: 'maria',
       password: 'guess',
+      roles: Role.Lawyer,
     },
   ];
 
