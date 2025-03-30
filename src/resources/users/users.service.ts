@@ -5,18 +5,24 @@ import { User } from './entities/user.entity';
 import { Role } from 'src/utils/enums/role.enum';
 @Injectable()
 export class UsersService {
-  private readonly users = [
+  private readonly users: User[] = [
     {
       id: 1,
       username: 'john',
       password: 'changeme',
-      roles: Role.Lawyer,
+      role: Role.Lawyer,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       id: 2,
       username: 'maria',
       password: 'guess',
-      roles: Role.Lawyer,
+      role: Role.Lawyer,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   ];
 
