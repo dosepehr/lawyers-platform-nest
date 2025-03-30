@@ -1,30 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { Role } from 'src/utils/enums/role.enum';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { RegisterDto } from '../auth/dto/register.dto';
 @Injectable()
 export class UsersService {
-  private readonly users: User[] = [
-    {
-      id: 1,
-      username: 'john',
-      password: 'changeme',
-      role: Role.Lawyer,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
-      username: 'maria',
-      password: 'guess',
-      role: Role.Lawyer,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) { }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find(user => user.username === username);
+  async findOne(username: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { username } });
+  }
+
+  async create(registerDto: RegisterDto): Promise<User> {
+    const newUser = this.userRepository.create(registerDto);
+    return this.userRepository.save(newUser);
   }
 }

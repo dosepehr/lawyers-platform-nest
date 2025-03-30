@@ -5,13 +5,17 @@ import { JwtAuthGuard } from 'src/utils/guards/jwt-auth.guard';
 import { Roles } from 'src/utils/decorators/role.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { RolesGuard } from 'src/utils/guards/roles.guard';
-interface LoginDto {
-  username: string;
-  password: string;
-}
+import { RegisterDto } from './dto/register.dto';
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
+
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
+  }
+
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
