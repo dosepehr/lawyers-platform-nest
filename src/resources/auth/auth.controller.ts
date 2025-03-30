@@ -14,7 +14,6 @@ export class AuthController {
   @Post('login')
   @Bind(Request())
   async login(req: any) {
-    return req.user;
+    return this.authService.login(req.user);
   }
-
 }
