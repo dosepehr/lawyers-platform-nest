@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { Role } from 'src/utils/enums/role.enum';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
+import { generateHash } from 'src/utils/funcs/password';
 @Injectable()
 export class UsersService {
   constructor(
@@ -18,7 +18,8 @@ export class UsersService {
     return this.userRepository.findOne({ where: { id } });
   }
   async create(registerDto: RegisterDto): Promise<User> {
-    const newUser = this.userRepository.create(registerDto);
+    const hashedPassword = await generateHash(registerDto.password);
+    const newUser = this.userRepository.create({ ...registerDto, password: hashedPassword });
     return this.userRepository.save(newUser);
   }
 }
