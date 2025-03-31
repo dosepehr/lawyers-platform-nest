@@ -1,14 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../../utils/config/multer.config';
 import { ServiceFileUplaodValidatorPipePipe } from '../../utils/pipes/service-file-uplaod-validator-pipe.pipe';
-@Controller('services')
+import { JwtAuthGuard } from 'src/utils/guards/jwt-auth.guard';
+import { Roles } from 'src/utils/decorators/role.decorator';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { Role } from 'src/utils/enums/role.enum';
+  @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) { }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   @Post()
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'image', maxCount: 1 },
@@ -34,6 +40,8 @@ export class ServicesController {
     return this.servicesService.findOne(slug);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   @Patch(':id')
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'image', maxCount: 1 },
@@ -50,6 +58,8 @@ export class ServicesController {
     return this.servicesService.update(+id, updateServiceDto, files);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.servicesService.remove(+id);
